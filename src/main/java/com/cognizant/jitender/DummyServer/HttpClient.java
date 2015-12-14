@@ -1,10 +1,14 @@
 package com.cognizant.jitender.DummyServer;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -21,13 +25,15 @@ import org.apache.http.message.BasicNameValuePair;
 
 public class HttpClient {
 	
+	 
+	  //GetConfigProp getConfigProp = new GetConfigProp();
 	  private static final String USER_AGENT = "Mozilla/5.0";
 	  
-	  private static final String GET_URL = "http://www.google.co.in";
+	  private static final String GET_URL = GetConfigProp.getURL();//"http://www.google.co.in";
 	 
 	  private static final String POST_URL = "http://www.google.co.in";
 	  
-	  static String sendGET() throws IOException {
+	  public static String sendGET() throws IOException {
 		    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 		    // Increase max total connection to 200
 		    cm.setMaxTotal(200);

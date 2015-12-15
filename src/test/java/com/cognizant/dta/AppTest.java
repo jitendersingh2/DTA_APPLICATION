@@ -1,4 +1,4 @@
-package com.cognizant.jitender.DummyServer;
+package com.cognizant.dta;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

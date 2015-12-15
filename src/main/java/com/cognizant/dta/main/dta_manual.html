@@ -50,40 +50,86 @@
 			height: 350px;
 		}
 
-
 	  </style>
-      <!--<link rel="stylesheet" type="text/css" href="style.css" />-->
-      <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-	  <!--<script src="C:\Users\504607\Desktop\FW__GET_XML\myscript.js" />-->
 	  
+	  <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>	  
+	  
+	  <script>
+         var app = angular.module("myApp", []); 
+         app.controller("dataController", function($scope, $http, $log, $location) {
+         	 $scope.macAdd = "FFFFFFFFFFFF";
+			 $scope.region = "Pittsburgh";
+			 $scope.transaction_ID = 1075250330;
+			 $scope.application_ID = 0;
+			 $scope.transactionId = 0;
+			 $scope.r_f = "FF";
+			 
+         	 var pad = function(n) {
+         								var t = n.toString(16).toUpperCase();
+         								return (n < 16) ? ("0" + t) : t;
+         						   }
+         							
+             $scope.manualPost = function() {
+		
+				var tmp = pad(+$scope.transaction_ID);
+				var trId = [tmp.slice(0,2),tmp.slice(2,4),tmp.slice(4,6),tmp.slice(6,8)].join(" "); 
+				var data = $scope.r_f+pad(+$scope.m_application_ID)+trId+pad(+$scope.total_sections)+pad(+$scope.current_section)+$scope.current_section_data ;	
+		
+				var xml = "<ApplicationGatewayMessage transactionId=\""+$scope.transactionId+"\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(data)+"</ApplicationGatewayMessage>"
+		 
+				var protocol = $location.protocol();
+				var host = $location.host();
+				var port = $location.port();
+				
+				var URL = protocol + "://" + host + ":" + port + "/getXML";
+	
+				$http({ method: 'POST',
+						url: URL,
+						data: xml
+				})
+				.then(function (response) {
+					alert("Display success:");
+					$scope.display = response;
+					$log.info(response);
+				},  function (reason) {
+					alert("Display error:");
+					$scope.display = reason;
+					$log.info(reason);
+				})
+			};
+         	
+         });        
+       
+      </script> 
+      
    </head>
    <body>
       <header >
          <h1 align='center'>DTA APP SIMULATOR</h1>
       </header>
       <br/>
-      <div data-ng-app="myApp" data-ng-controller="dataCtrl" id='main'>
+      <div ng-app="myApp" ng-controller="dataController" id='main'>
          <div class='left'>
-					<form data-ng-submit="manualPost()">
+					<form ng-submit="manualPost()">
 						<h4>AGI Request XML Data</h4>
 						<br/>
-						<input type="text" data-ng-model="transactionId" size="30">XML Transaction ID</input>
+						<input type="text" ng-model="transactionId" size="30">XML Transaction ID</input>
 						<br/>
-						<input type="text" data-ng-model="macAdd" size="30">Mac Address</input>
+						<input type="text" ng-model="macAdd" size="30">Mac Address</input>
 						<br/>
-						<input type="text" data-ng-model="region" size="30">Region</input>
+						<input type="text" ng-model="region" size="30">Region</input>
 						<br/><br/>
 						<h4>AGM Data</h4>
 						<br/>
-						<input type="text" data-ng-model="r_f" size="30">Reserved Field</input>
+						<input type="text" ng-model="r_f" size="30">Reserved Field</input>
 						<br/>
-						<input type="text" data-ng-model="application_ID" size="30">ApplicationID</input>
+						<input type="text" ng-model="application_ID" size="30">ApplicationID</input>
 						<br/>
-						<input type="text" data-ng-model="transaction_ID" size="30">Transaction ID</input>
+						<input type="text" ng-model="transaction_ID" size="30">Transaction ID</input>
 						<br/>
-						<input type="text" data-ng-model="total_sections" size="30">Total Sections</input>
+						<input type="text" ng-model="total_sections" size="30">Total Sections</input>
 						<br/>
-						<input type="text" data-ng-model="current_section" size="30">Current Section</input>
+						<input type="text" ng-model="current_section" size="30">Current Section</input>
 						<br/>
 						<textarea data-ng-model="current_section_data" cols="25" rows="5" placeholder="Current Section Data">
 						</textarea>
@@ -105,62 +151,6 @@
          </div>
       </div>
 	 
-      <script>
-         var app = angular.module("myApp", []); 
-         app.controller("dataCtrl", function($scope, $http, $log, $location) {
-         	 $scope.macAdd = "FFFFFFFFFFFF";
-			 $scope.region = "Pittsburgh";
-			 $scope.transaction_ID = 1075250330;
-			 $scope.application_ID = 0;
-			 $scope.transactionId = 0;
-			 $scope.r_f = "FF";
-			 
-         	 
-         	 var pad = function(n) {
-         								var t = n.toString(16).toUpperCase();
-         								return (n < 16) ? ("0" + t) : t;
-         							}
-         							
-             $scope.manualPost = function() {
-		
-		
-				var tmp = pad(+$scope.transaction_ID);
-				var trId = [tmp.slice(0,2),tmp.slice(2,4),tmp.slice(4,6),tmp.slice(6,8)].join(" "); 
-				var data = $scope.r_f+pad(+$scope.m_application_ID)+trId+pad(+$scope.total_sections)+pad(+$scope.current_section)+$scope.current_section_data ;	
-		
-				var xml = "<ApplicationGatewayMessage transactionId=\""+$scope.transactionId+"\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(data)+"</ApplicationGatewayMessage>"
-		 
-				
-				var protocol = $location.protocol();
-				var host = $location.host();
-				var port = $location.port();
-				
-				var URL = protocol + "://" + host + ":" + port + "/getXML";
-	
-			
-				//$http.post(URL, xml)
-				$http({ method: 'POST',
-						url: URL,
-						data: xml
-						//withCredentials: true
-				})
-				.then(function (response) {
-					alert("Display success:");
-					$scope.display = response;
-					$log.info(response);
-				},  function (reason) {
-					alert("Display error:");
-					$scope.display = reason;
-					$log.info(reason);
-				})
-			};
-         	
-         	
-             
-         });
-         
-       
-      </script> 
    </body>
 </html>
 

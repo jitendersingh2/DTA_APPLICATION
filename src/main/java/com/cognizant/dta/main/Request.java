@@ -81,7 +81,6 @@ public class Request {
 		 
 		 
 		 get("/getXML", (request, response) -> {
-			response.type("application/xml");
 			String body =  request.body();
 			System.out.println(body);
 			return HttpClient.sendPOST(body);

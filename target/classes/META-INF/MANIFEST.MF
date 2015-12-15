@@ -13,5 +13,5 @@ Class-Path: dependency-jars/spark-core-2.1.jar dependency-jars/slf4j-a
  -codec-1.9.jar
 Build-Jdk: 1.8.0_31
 Created-By: Maven Integration for Eclipse
-Main-Class: com.cognizant.jitender.DummyServer.Request
+Main-Class: com.cognizant.dta.main.Request
 

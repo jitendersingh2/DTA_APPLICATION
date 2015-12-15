@@ -1,29 +1,28 @@
-package com.cognizant.jitender.DummyServer;
+package com.cognizant.dta.main;
 
 import static spark.Spark.get;
-import static spark.Spark.post;
 import static spark.Spark.port;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.URL;
+
+
+import com.cognizant.dta.utils.GetConfigProp;
+import com.cognizant.dta.utils.HttpClient;
 
 
 
 public class Request {
 	
 	 static final String PORT = GetConfigProp.getPORT();
-	 
-	 //setPort(1234);
+	 	 
 	 public static void main(String[] args) {
 		 
 		
 		 port(Integer.parseInt(PORT));
 		 
-		 get("/getUIManual", (request, response) -> {
+		 get("/getUI_Manual", (request, response) -> {
 			 	
 			 
 			 String str = "";
@@ -49,7 +48,7 @@ public class Request {
 		 });
 		 
 		 
-		 get("/getUIFile", (request, response) -> {
+		 get("/getUI_File", (request, response) -> {
 			 	
 			 
 			 String str = "";
@@ -76,22 +75,17 @@ public class Request {
 		 
 		 
 		 get("/getAGI", (request, response) -> {
-			 //HttpClient httpClient = new HttpClient();
 			 response.header("Access-Control-Allow-Origin", "*");
 			 return HttpClient.sendGET();
-			 
-		 });
+	     });
 		 
 		 
 		 get("/getXML", (request, response) -> {
-			 //HttpClient httpClient = new HttpClient();
 			response.type("application/xml");
 			String body =  request.body();
 			System.out.println(body);
 			return HttpClient.sendPOST(body);
-			//return "";
-			 
-		 });
+	     });
 	 }
 
 }

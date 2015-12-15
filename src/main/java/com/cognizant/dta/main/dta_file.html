@@ -54,7 +54,7 @@
 	  </style>
 	  
 	  
-      <!--<link rel="stylesheet" type="text/css" href="style.css">-->
+      
       <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
    </head>
    <body >
@@ -107,20 +107,20 @@
          </div>
       </div>
       <script>
-		 <!-- AngularJS module for application -->
+		 
          var app = angular.module('myApp', []);
-		 <!-- AngularJS controller -->
+		 
 		 app.config(function($httpProvider) {
 			$httpProvider.defaults.useXDomain = true;
 			delete $httpProvider.defaults.headers
 			.common['X-Requested-With'];
 			});
-         app.controller('dataCtrl', function($scope, $http) {
+         app.controller('dataCtrl', function($scope, $http, $location) {
          	 $scope.display = "No Data to Display";
 			 $scope.contentLength = 0;
          	 $scope.sections = 0;
          	 $scope.agmSize = 200;
-			 <!-- Initialization of data for AGI request -->
+			 
          	 $scope.macAdd = "FFFFFFFFFFFF";
          	 $scope.application_ID = 0;
          	 $scope.region = "Pittsburgh";
@@ -134,12 +134,11 @@
          							
              $scope.sendPost = function() {
                
-         		<!-- var tmp = pad(+$scope.transaction_ID); -->
-         		<!-- var transactionId = [tmp.slice(0,2),tmp.slice(2,4),tmp.slice(4,6),tmp.slice(6,8)].join(" "); -->
+         		
          		$scope.display = "";
          		var transactionId = 1075250330;
          			
-         		var data = "<BatchApplicationGatewayMessages schemaVersion=\"1.1\"  xmlns=\"http://www.ccadllc.com/schema/dta-application-gateway/1\">"
+         		var dataXML = "<BatchApplicationGatewayMessages schemaVersion=\"1.1\"  xmlns=\"http://www.ccadllc.com/schema/dta-application-gateway/1\">"
          		   
          		   for(j=0; j<contentList.length; j++){
          		   
@@ -147,21 +146,23 @@
          				
          				var subXml = "<ApplicationGatewayMessage transactionId=\"234567\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(tmpData)+"\n</ApplicationGatewayMessage>"
          			
-         				data = data + subXml;
+         				dataXML = dataXML + subXml;
          		   }
          		   
-         		   data = data+"</BatchApplicationGatewayMessages>"
+         		   dataXML = dataXML+"</BatchApplicationGatewayMessages>"
+         		   
+         		   var protocol = $location.protocol();
+   				   var host = $location.host();
+   				   var port = $location.port();
+   				
+   				   var URL = protocol + "://" + host + ":" + port + "/getXML";
 				   
-				   var protocol = $location.protocol();
-				   var host = $location.host();
-				   var port = $location.port();
 				
-				   var URL = protocol + "://" + host + ":" + port + "/getXML";
          		   
                    $http({ method: 'POST',
 						url: URL,
-						data: data
-						//withCredentials: true
+						data: dataXML
+						
 				   })
 				   .then(function (response) {
 						alert("Display success:");

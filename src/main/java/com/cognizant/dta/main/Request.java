@@ -29,8 +29,6 @@ public class Request {
 		else
 			port(Integer.parseInt(PORT));
 
-		
-		
 		get("/getUI_Manual", (request, response) -> {
 
 

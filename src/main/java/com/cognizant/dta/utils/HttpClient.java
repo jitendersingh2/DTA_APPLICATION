@@ -25,21 +25,21 @@ public class HttpClient {
 	  private static final int SET_MAX_CLIENT_CONNECTION = 200;
 	  private static final int MAX_PER_ROUTE = 20;
 	  private static final String HOST = "localhost";
-	  private static final int MAX_HOST = 80;
 	  private static final int MAX_HOST_PER_ROUTE = 20;	  
 	  private static final String GET_URL = GetConfigProp.getURL();	  
 	  private static final String POST_URL = GetConfigProp.getURL();
 	  private static PoolingHttpClientConnectionManager cm = null;	  
+	  private static final String PORT = GetConfigProp.getPORT();
 	  
 	  static {
 		    cm.setMaxTotal(SET_MAX_CLIENT_CONNECTION);		    
 		    cm.setDefaultMaxPerRoute(MAX_PER_ROUTE);
-		   
 	  }
+	  
 	  public static String sendGET() throws IOException {
 		    
 		    
-		    HttpHost localhost = new HttpHost(HOST, MAX_HOST);
+		    HttpHost localhost = new HttpHost(HOST, Integer.parseInt(PORT));
 		    cm.setMaxPerRoute(new HttpRoute(localhost), MAX_HOST_PER_ROUTE);
 		    
 	        HttpGet httpGet = new HttpGet(GET_URL);
@@ -49,7 +49,7 @@ public class HttpClient {
 	        try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build()){
 	        	httpResponse = httpClient.execute(httpGet);
 			} catch (Exception e) {
-				// TODO: log it
+				e.printStackTrace();
 			}
 	        
 	        StringBuilder response = new StringBuilder();
@@ -79,7 +79,7 @@ public class HttpClient {
 	        httpPost.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 	        
 	        
-		    HttpHost localhost = new HttpHost(HOST, MAX_HOST);
+		    HttpHost localhost = new HttpHost(HOST, Integer.parseInt(PORT));
 		    cm.setMaxPerRoute(new HttpRoute(localhost), MAX_HOST_PER_ROUTE);
 	        
 	        HttpEntity entity = new ByteArrayEntity(xml.getBytes(ENCODING));
@@ -108,7 +108,6 @@ public class HttpClient {
 				throw new Exception("Unable to parse the response from url:"+POST_URL);
 	        } finally{
 	        	httpResponse.close();
-	        	
 	        }
 	 	                
 	        return response.toString();

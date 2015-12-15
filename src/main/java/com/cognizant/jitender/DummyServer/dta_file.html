@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8"/>
+	  <style>
+	    * {
+			padding: 0;
+			margin: 0;
+		}
+		html, body, #container {
+			height: 100%;
+		}
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		li {
+			float: left;
+			border: 1px solid #000;
+			border-bottom-width: 0;
+			margin: 3px 3px 0px 3px;
+			padding: 5px 5px 0px 5px;
+			background-color: #CCC;
+			color: #696969;
+		}
+		header {
+			height: 50px;
+			background: gray;
+		}
+		#main {
+			height: 100%;
+			width: 100%;
+	
+		}
+		.right {
+			float:left;
+			width: 60%;
+			height: 470px;
+		}
+		.left {
+			margin-left: 20px;
+			width: 35%;
+			float:left;
+			height: 500px;
+			border-right: 1px solid black;
+		}.display {
+			margin-left: 10px;
+			width: 650px;
+			height: 350px;
+		}
+
+
+	  </style>
+	  
+	  
+      <!--<link rel="stylesheet" type="text/css" href="style.css">-->
+      <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+   </head>
+   <body >
+      <header >
+         <h1 align='center'>DTA APP SIMULATOR</h1>
+      </header>
+      <br>
+      <div ng-app="myApp" ng-controller="dataCtrl" id='main'>
+         <div class='left'>
+					<div>
+					<br>
+					   <input type="text" ng-model="agmSize" size="10">Max Size of Current Section Data
+						<br>
+						<pre>Please change the max size field</pre>
+						<pre>before uploading the file.</pre>
+						<br>
+					   Select File 
+					   <br>
+					   <input id="fileInput" type="file" on-read-file="showContent($fileContent)"/>
+					</div>
+					<div>
+					   <br>
+					   <pre>File Length is:{{ contentLength }} bytes</pre>
+					   <pre>Total Sections:{{ sections }} of max size {{ agmSize }} bytes</pre>
+					</div>
+					<form ng-submit="sendPost()">
+					   <br>
+					   <h4>AGI Request XML Data</h4>
+					   <br>
+					   <input type="text" ng-model="r_f" size="30">Reserved Field
+					   <br>
+					   <input type="text" ng-model="application_ID" size="30">Application ID
+					   <br>
+					   <input type="text" ng-model="macAdd" size="30">Mac Address
+					   <br>
+					   <input type="text" ng-model="region" size="30">Region
+					   <br><br>
+					   <input type="submit" value="Generate XML">
+					</form>
+         </div>
+         <div class='right'>
+            &nbsp;&nbsp;&nbsp;<input type="text" ng-model="url" size="40" placeholder="URL : IP: PORT">  
+            <input type="button" value="Post Message">  
+            <br><br>
+            <h4 style='margin-left: 10px;'>Generated XML</h4>
+            <br>
+            <div class='display'>
+               {{display}}
+            </div>
+         </div>
+      </div>
+      <script>
+		 <!-- AngularJS module for application -->
+         var app = angular.module('myApp', []);
+		 <!-- AngularJS controller -->
+		 app.config(function($httpProvider) {
+			$httpProvider.defaults.useXDomain = true;
+			delete $httpProvider.defaults.headers
+			.common['X-Requested-With'];
+			});
+         app.controller('dataCtrl', function($scope, $http) {
+         	 $scope.display = "No Data to Display";
+			 $scope.contentLength = 0;
+         	 $scope.sections = 0;
+         	 $scope.agmSize = 200;
+			 <!-- Initialization of data for AGI request -->
+         	 $scope.macAdd = "FFFFFFFFFFFF";
+         	 $scope.application_ID = 0;
+         	 $scope.region = "Pittsburgh";
+			 $scope.r_f = "FF";
+         	 
+         	 var contentList = [];
+         	 var pad = function(n) {
+         								var t = n.toString(16).toUpperCase();
+         								return (n < 16) ? ("0" + t) : t;
+         						   }
+         							
+             $scope.sendPost = function() {
+               
+         		<!-- var tmp = pad(+$scope.transaction_ID); -->
+         		<!-- var transactionId = [tmp.slice(0,2),tmp.slice(2,4),tmp.slice(4,6),tmp.slice(6,8)].join(" "); -->
+         		$scope.display = "";
+         		var transactionId = 1075250330;
+         			
+         		var data = "<BatchApplicationGatewayMessages schemaVersion=\"1.1\"  xmlns=\"http://www.ccadllc.com/schema/dta-application-gateway/1\">"
+         		   
+         		   for(j=0; j<contentList.length; j++){
+         		   
+         				var tmpData = $scope.r_f+pad(+$scope.application_ID)+transactionId+pad(+$scope.sections)+pad(+(j+1))+contentList[j] ;
+         				
+         				var subXml = "<ApplicationGatewayMessage transactionId=\"234567\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(tmpData)+"\n</ApplicationGatewayMessage>"
+         			
+         				data = data + subXml;
+         		   }
+         		   
+         		   data = data+"</BatchApplicationGatewayMessages>"
+				   
+				   var protocol = $location.protocol();
+				   var host = $location.host();
+				   var port = $location.port();
+				
+				   var URL = protocol + "://" + host + ":" + port + "/getXML";
+         		   
+                   $http({ method: 'POST',
+						url: URL,
+						data: data
+						//withCredentials: true
+				   })
+				   .then(function (response) {
+						alert("Display success:");
+						$scope.display = response;
+						$log.info(response);
+				   }, function (reason) {
+						alert("Display error:");
+						$scope.display = reason;
+						$log.info(reason);
+				   })
+             };
+         	
+         			$scope.showContent = function($fileContent){
+					contentList = [];
+         			$scope.content = $fileContent;
+         			$scope.contentLength = $scope.content.length;
+         			$scope.sections = Math.floor($scope.contentLength/$scope.agmSize)+1;
+         				for (i = $scope.contentLength; i > $scope.agmSize; i =i-$scope.agmSize) {
+         						var end = i;
+         						var start = i-$scope.agmSize;
+         						var tmp = $scope.content.slice(start,end);
+         						contentList.push(tmp);
+         				}
+         				contentList.push($scope.content.slice(0,i));
+         					
+         			};
+         	
+             
+         });
+         
+         app.directive('onReadFile', function ($parse) {
+            return {
+         	 
+               restrict: 'A',
+               scope: false,
+               link: function(scope, element, attrs) {
+			   
+				  document.getElementById('fileInput').value = '';
+                  var fn = $parse(attrs.onReadFile);
+                  element.on('change', function(onChangeEvent) {
+                     var reader = new FileReader();
+          
+                     reader.onload = function(onLoadEvent) {
+                        scope.$apply(function() {
+                           fn(scope, {$fileContent:onLoadEvent.target.result});
+                        });
+                     };
+          
+                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+                  });
+               }
+            };
+         });
+      </script>
+   </body>
+</html>
+

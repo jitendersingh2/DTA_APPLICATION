@@ -7,11 +7,6 @@ import java.util.Properties;
 
 public class GetConfigProp {
 	
-	
-	  
-	  //String propFileName = "config.properties";
-	  
-	  //Properties prop = new Properties();
 	 public static String getURL(){
 		 Properties prop = new Properties();
 	 

@@ -1,6 +1,7 @@
 package com.cognizant.jitender.DummyServer;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 import static spark.Spark.setPort;
 
 import java.io.File;
@@ -19,7 +20,9 @@ public class Request {
 	 //setPort(1234);
 	 public static void main(String[] args) {
 		 
+		
 		 setPort(Integer.parseInt(PORT));
+		 
 		 get("/getUI", (request, response) -> {
 			 	
 			 
@@ -45,10 +48,21 @@ public class Request {
 				return str; 
 		 });
 		 
-		 get("/getAGI", (request, response) -> {
+		 get("/getXML", (request, response) -> {
 			 //HttpClient httpClient = new HttpClient();
 			 response.header("Access-Control-Allow-Origin", "*");
 			 return HttpClient.sendGET();
+			 
+		 });
+		 
+		 
+		 get("/getXML", (request, response) -> {
+			 //HttpClient httpClient = new HttpClient();
+			response.type("application/xml");
+			String body =  request.body();
+			System.out.println(body);
+			return HttpClient.sendPOST(body);
+			//return "";
 			 
 		 });
 	 }

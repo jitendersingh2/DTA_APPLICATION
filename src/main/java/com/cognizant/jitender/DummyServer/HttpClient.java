@@ -18,6 +18,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -29,10 +30,10 @@ public class HttpClient {
 	  //GetConfigProp getConfigProp = new GetConfigProp();
 	  private static final String USER_AGENT = "Mozilla/5.0";
 	  
-	  private static final String GET_URL = GetConfigProp.getURL();//"http://www.google.co.in";
-	 
-	  private static final String POST_URL = "http://www.google.co.in";
+	  private static final String GET_URL = GetConfigProp.getURL();
 	  
+	  private static final String POST_URL = GetConfigProp.getURL();
+	  	  
 	  public static String sendGET() throws IOException {
 		    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 		    // Increase max total connection to 200
@@ -67,25 +68,29 @@ public class HttpClient {
 			
 	        } finally {
 	        	reader.close();
-				
+	        	httpClient.close();
 			}
 	        // print result
 	        System.out.println(response.toString());
-	        httpClient.close();
+	        
 	        return response.toString();
 	  }
 	 
-	    static String sendPOST() throws IOException {
+	    static String sendPOST(String xml) throws IOException {
 	 
 	        CloseableHttpClient httpClient = HttpClients.createDefault();
 	        HttpPost httpPost = new HttpPost(POST_URL);
 	        httpPost.addHeader("User-Agent", USER_AGENT);
+	        httpPost.setHeader("Content-Type", "application/xml");
+	        
+	        HttpEntity entity = new ByteArrayEntity(xml.getBytes("UTF-8"));
+	        httpPost.setEntity(entity);
 	 
-	        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+	        /*List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 	        urlParameters.add(new BasicNameValuePair("userName", "Pankaj Kumar"));
 	 
 	        HttpEntity postParams = new UrlEncodedFormEntity(urlParameters);
-	        httpPost.setEntity(postParams);
+	        httpPost.setEntity(postParams);*/
 	 
 	        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
 	 
@@ -111,5 +116,3 @@ public class HttpClient {
 	    }
 
 }
-
-

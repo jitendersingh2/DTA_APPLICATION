@@ -107,7 +107,7 @@
 	 
       <script>
          var app = angular.module("myApp", []); 
-         app.controller("dataCtrl", function($scope, $http, $log, $q) {
+         app.controller("dataCtrl", function($scope, $http, $log, $location) {
          	 $scope.macAdd = "FFFFFFFFFFFF";
 			 $scope.region = "Pittsburgh";
 			 $scope.transaction_ID = 1075250330;
@@ -115,7 +115,6 @@
 			 $scope.transactionId = 0;
 			 $scope.r_f = "FF";
 			 
-			 var deferred = $q.defer();
          	 
          	 var pad = function(n) {
          								var t = n.toString(16).toUpperCase();
@@ -131,10 +130,19 @@
 		
 				var xml = "<ApplicationGatewayMessage transactionId=\""+$scope.transactionId+"\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(data)+"</ApplicationGatewayMessage>"
 		 
-				//$http.post("https://192.168.102.80:8443/dta-application-gateway", xml)
-				$http({ method: 'GET',
-						url: "http://localhost:4567/getAGI",
-						withCredentials: true
+				
+				var protocol = $location.protocol();
+				var host = $location.host();
+				var port = $location.port();
+				
+				var URL = protocol + "://" + host + ":" + port + "/getXML";
+	
+			
+				//$http.post(URL, xml)
+				$http({ method: 'POST',
+						url: URL,
+						data: xml
+						//withCredentials: true
 				})
 				.then(function (response) {
 					alert("Display success:");

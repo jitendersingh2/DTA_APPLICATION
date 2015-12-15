@@ -16,70 +16,45 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 public class HttpClient {
-		  
-	  private static final String USER_AGENT = "Mozilla/5.0";
-	  
-	  private static final String GET_URL = GetConfigProp.getURL();
-	  
+	
+	  private static final String CONTENT_TYPE = "Content-Type";
+	  private static final String CONTENT_TYPE_VALUE = "application/xml";
+	  private static final String USER_AGENT = "User-Agent";
+	  private static final String USER_AGENT_VALUE = "Mozilla/5.0";
+	  private static final String ENCODING = "UTF-8";
+	  private static final int SET_MAX_CLIENT_CONNECTION = 200;
+	  private static final int MAX_PER_ROUTE = 20;
+	  private static final String HOST = "localhost";
+	  private static final int MAX_HOST = 80;
+	  private static final int MAX_HOST_PER_ROUTE = 20;	  
+	  private static final String GET_URL = GetConfigProp.getURL();	  
 	  private static final String POST_URL = GetConfigProp.getURL();
-	  	  
+	  private static PoolingHttpClientConnectionManager cm = null;	  
+	  
+	  static {
+		    cm.setMaxTotal(SET_MAX_CLIENT_CONNECTION);		    
+		    cm.setDefaultMaxPerRoute(MAX_PER_ROUTE);
+		   
+	  }
 	  public static String sendGET() throws IOException {
 		    
-		    PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();		    
-		    cm.setMaxTotal(200);		    
-		    cm.setDefaultMaxPerRoute(20);
 		    
-		    HttpHost localhost = new HttpHost("locahost", 80);
-		    cm.setMaxPerRoute(new HttpRoute(localhost), 50);
-	        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build();;
+		    HttpHost localhost = new HttpHost(HOST, MAX_HOST);
+		    cm.setMaxPerRoute(new HttpRoute(localhost), MAX_HOST_PER_ROUTE);
+		    
 	        HttpGet httpGet = new HttpGet(GET_URL);
-	        httpGet.addHeader("User-Agent", USER_AGENT);
-	        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+	        httpGet.addHeader(USER_AGENT, USER_AGENT_VALUE);
 	        
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(
-	                httpResponse.getEntity().getContent()));
-	        
-	        StringBuffer response = new StringBuffer();
-	 
-	        System.out.println("GET Response Status:: " + httpResponse.getStatusLine().getStatusCode());
-	 
-	        try {
-	        	String inputLine;
-		       
-		        while ((inputLine = reader.readLine()) != null) {
-		            response.append(inputLine);
-		        }
-	        	
-	        } catch (IOException e) {
-				e.printStackTrace();
-			
-	        } finally {
-	        	reader.close();
-	        	httpClient.close();
+	        CloseableHttpResponse httpResponse = null; 
+	        try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build()){
+	        	httpResponse = httpClient.execute(httpGet);
+			} catch (Exception e) {
+				// TODO: log it
 			}
 	        
-	        return response.toString();
-	  }
-	 
-	    public static String sendPOST(String xml) throws IOException {
-	 
-	        CloseableHttpClient httpClient = HttpClients.createDefault();
-	        HttpPost httpPost = new HttpPost(POST_URL);
-	        httpPost.addHeader("User-Agent", USER_AGENT);
-	        httpPost.setHeader("Content-Type", "application/xml");
-	        
-	        HttpEntity entity = new ByteArrayEntity(xml.getBytes("UTF-8"));
-	        httpPost.setEntity(entity);
-	 
-	        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
-	        
-	        StringBuffer response = new StringBuffer();
-	 
-	        System.out.println("POST Response Status:: " + httpResponse.getStatusLine().getStatusCode());
-	 
-	        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-	        
-	        try {
+	        StringBuilder response = new StringBuilder();
+	   	 
+	        try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()))){
 	        	String inputLine;
 	 	         	 
 	 	        while ((inputLine = reader.readLine()) != null) {
@@ -87,15 +62,57 @@ public class HttpClient {
 	 	        }
 	        	
 	        } catch (IOException e) {
-				e.printStackTrace();
-			
-	        } finally {
-	        	reader.close();
-	        	httpClient.close();
+				e.printStackTrace();			
+	        } 
+	 	                
+	        return response.toString();
+	      
+	  }
+	 
+	  public static String sendPOST(String xml) throws Exception {
+		  
+		  	if (POST_URL.equals(GetConfigProp.EXCEPTION_MESSAGE)) {
+				throw new Exception(GetConfigProp.EXCEPTION_MESSAGE);
 			}
+		    HttpPost httpPost = new HttpPost(POST_URL);
+	        httpPost.addHeader(USER_AGENT, USER_AGENT_VALUE);
+	        httpPost.setHeader(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+	        
+	        
+		    HttpHost localhost = new HttpHost(HOST, MAX_HOST);
+		    cm.setMaxPerRoute(new HttpRoute(localhost), MAX_HOST_PER_ROUTE);
+	        
+	        HttpEntity entity = new ByteArrayEntity(xml.getBytes(ENCODING));
+	        httpPost.setEntity(entity);
+	 
+	        CloseableHttpResponse httpResponse = null;
+	        try (CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build()){
+	        	httpResponse = httpClient.execute(httpPost);
+			} catch (Exception e) {
+				httpResponse.close();
+				e.printStackTrace();
+				throw new Exception("Unable to hit the url:"+POST_URL);
+			}
+	        
+	        StringBuilder response = new StringBuilder();
+	 
+	        try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()))){
+	        	String inputLine;
+	 	         	 
+	 	        while ((inputLine = reader.readLine()) != null) {
+	 	            response.append(inputLine);
+	 	        }
+	        	
+	        } catch (IOException e) {
+				e.printStackTrace();	
+				throw new Exception("Unable to parse the response from url:"+POST_URL);
+	        } finally{
+	        	httpResponse.close();
+	        	
+	        }
 	 	                
 	        return response.toString();
 	 
-	    }
+	  }
 
 }

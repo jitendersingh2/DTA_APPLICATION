@@ -3,88 +3,96 @@ package com.cognizant.dta.main;
 import static spark.Spark.get;
 import static spark.Spark.port;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-
 
 import com.cognizant.dta.utils.GetConfigProp;
 import com.cognizant.dta.utils.HttpClient;
 
 
-
 public class Request {
-	
-	 static final String PORT = GetConfigProp.getPORT();
-	 	 
-	 public static void main(String[] args) {
-		 
+
+	private static final String PORT = GetConfigProp.getPORT();
+	private static final String DTA_MANUAL = "dta_manual.html";
+	private static final String DTA_FILE = "dta_file.html";
+	private static final String CONTENT_TYPE = "Access-Control-Allow-Origin";
+	private static final String CONTENT_TYPE_VALUE = "*";
+	private static final int STATUS = 200;
+	private static final int DEFAULT_PORT = 4567;
+
+	public static void main(String[] args) {
+
+
+		if (PORT.equals(GetConfigProp.EXCEPTION_MESSAGE)) 
+			port(DEFAULT_PORT);
+		else
+			port(Integer.parseInt(PORT));
+
 		
-		 port(Integer.parseInt(PORT));
-		 
-		 get("/getUI_Manual", (request, response) -> {
-			 	
-			 
-			 String str = "";
-			 
-			 InputStream inputStream = Request.class.getResourceAsStream("dta_manual.html");
-			 
-	            if (inputStream != null) {
-	                
-	                response.status(200);
+		
+		get("/getUI_Manual", (request, response) -> {
 
-	                byte[] buf = new byte[1024];
-	                OutputStream os = response.raw().getOutputStream();
-	                OutputStreamWriter outWriter = new OutputStreamWriter(os);
-	                int count = 0;
-	                while ((count = inputStream.read(buf)) >= 0) {
-	                    os.write(buf, 0, count);
-	                }
-	                inputStream.close();
-	                outWriter.close();
 
-	            }
-				return str; 
-		 });
-		 
-		 
-		 get("/getUI_File", (request, response) -> {
-			 	
-			 
-			 String str = "";
-			 
-			 InputStream inputStream = Request.class.getResourceAsStream("dta_file.html");
-			 
-	            if (inputStream != null) {
-	                
-	                response.status(200);
+			String str = "";
 
-	                byte[] buf = new byte[1024];
-	                OutputStream os = response.raw().getOutputStream();
-	                OutputStreamWriter outWriter = new OutputStreamWriter(os);
-	                int count = 0;
-	                while ((count = inputStream.read(buf)) >= 0) {
-	                    os.write(buf, 0, count);
-	                }
-	                inputStream.close();
-	                outWriter.close();
+			try (InputStream inputStream = Request.class.getResourceAsStream(DTA_MANUAL);) {
 
-	            }
-				return str; 
-		 });
-		 
-		 
-		 get("/getAGI", (request, response) -> {
-			 response.header("Access-Control-Allow-Origin", "*");
-			 return HttpClient.sendGET();
-	     });
-		 
-		 
-		 get("/getXML", (request, response) -> {
+				if (inputStream != null) {
+
+					response.status(STATUS);
+
+					byte[] buf = new byte[1024];
+					OutputStream os = response.raw().getOutputStream();
+					int count = 0;
+					while ((count = inputStream.read(buf)) >= 0) {
+						os.write(buf, 0, count);
+					}
+
+				}
+			} catch (IOException e)  {
+				e.printStackTrace();
+			}
+			return str; 
+		});
+
+
+		get("/getUI_File", (request, response) -> {
+
+
+			String str = "";
+
+			try (InputStream inputStream = Request.class.getResourceAsStream(DTA_FILE);) {
+
+				if (inputStream != null) {
+
+					response.status(STATUS);
+
+					byte[] buf = new byte[1024];
+					OutputStream os = response.raw().getOutputStream();
+					int count = 0;
+					while ((count = inputStream.read(buf)) >= 0) {
+						os.write(buf, 0, count);
+					}
+
+				}
+			} catch (IOException e)  {
+				e.printStackTrace();
+			}
+			return str;
+		});
+
+
+		get("/getAGI", (request, response) -> {
+			response.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+			return HttpClient.sendGET();
+		});
+
+
+		get("/getXML", (request, response) -> {
 			String body =  request.body();
-			System.out.println(body);
 			return HttpClient.sendPOST(body);
-	     });
-	 }
+		});
+	}
 
 }

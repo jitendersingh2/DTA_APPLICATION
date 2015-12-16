@@ -19,18 +19,11 @@ public class HttpClient {
 	  private static final String CONTENT_TYPE_VALUE = "application/xml";
 	  private static final String USER_AGENT = "User-Agent";
 	  private static final String USER_AGENT_VALUE = "Mozilla/5.0";
-	  private static final String ENCODING = "UTF-8";
-	  private static final int SET_MAX_CLIENT_CONNECTION = 200;
-	  private static final int MAX_PER_ROUTE = 20;
+	  private static final String ENCODING = "UTF-8";	  
 	  private static final String GET_URL = GetConfigProp.getURL();	  
 	  private static final String POST_URL = GetConfigProp.getURL();
 	  private static PoolingHttpClientConnectionManager cm = null;	  
-	 	  
-	  static {
-		    cm.setMaxTotal(SET_MAX_CLIENT_CONNECTION);		    
-		    cm.setDefaultMaxPerRoute(MAX_PER_ROUTE);
-	  }
-	  
+	 	
 	  public static String sendGET() throws IOException {
 		    
 		    HttpGet httpGet = new HttpGet(GET_URL);

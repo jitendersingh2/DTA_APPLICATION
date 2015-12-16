@@ -31,13 +31,6 @@ public class RequestURL {
 		else
 			setPort(Integer.parseInt(PORT));
 		
-		get(new Route("/hello") {
-            @Override
-            public Object handle(Request request, Response response) {
-                return "Hello Spark MVC Framework!";
-            }
-        });
-		
 		get(new Route("/getUI_Manual") {
 				@Override
 	            public Object handle(Request request, Response response) {
@@ -65,7 +58,6 @@ public class RequestURL {
 				
 	    });
 
-		
 		get(new Route("/getUI_File") {
 			@Override
             public Object handle(Request request, Response response) {
@@ -92,7 +84,6 @@ public class RequestURL {
 
 		});
 		
-		
 		get(new Route("/getAGI") {
 			@Override
             public Object handle(Request request, Response response) {
@@ -108,7 +99,6 @@ public class RequestURL {
 
         });
 
-		
 		get(new Route("/getXML") {
 			@Override
             public Object handle(Request request, Response response) {

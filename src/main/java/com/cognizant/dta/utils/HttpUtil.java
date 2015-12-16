@@ -79,9 +79,8 @@ public class HttpUtil {
 	        try (CloseableHttpClient httpClient = HttpClients.createDefault()){
 	        	httpResponse = httpClient.execute(httpPost);
 			} catch (Exception e) {
-				httpResponse.close();
 				e.printStackTrace();
-				log.error("===== Unable to hit the url:"+POST_URL);
+				log.error("===== Unable to hit the url:"+POST_URL+" with exception:"+e.getMessage());
 				throw new Exception("Unable to hit the url:" + POST_URL);
 			}
 	        

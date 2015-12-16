@@ -116,14 +116,15 @@ public class MainController {
 
         });
 
-		get(new Route("/getXML") {
+		post(new Route("/getXML") {
 			@Override
             public Object handle(Request request, Response response) {
 				
 				log.info("========== Inside getXML");
             	String body =  request.body();
     			try {
-					return HttpUtil.sendPOST(body);
+    				String tmp = HttpUtil.sendPOST(body);
+					return (tmp==null?str:tmp);
 				} catch (Exception e) {
 					e.printStackTrace();
 					log.error("========== Unable to send the post request.");

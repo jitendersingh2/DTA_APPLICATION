@@ -1,17 +1,17 @@
 Manifest-Version: 1.0
 Built-By: 504607
-Class-Path: dependency-jars/spark-core-2.1.jar dependency-jars/slf4j-a
- pi-1.7.7.jar dependency-jars/slf4j-simple-1.7.7.jar dependency-jars/j
- etty-server-9.0.2.v20130417.jar dependency-jars/javax.servlet-3.0.0.v
- 201112011016.jar dependency-jars/jetty-http-9.0.2.v20130417.jar depen
- dency-jars/jetty-util-9.0.2.v20130417.jar dependency-jars/jetty-io-9.
- 0.2.v20130417.jar dependency-jars/jetty-webapp-9.0.2.v20130417.jar de
- pendency-jars/jetty-xml-9.0.2.v20130417.jar dependency-jars/jetty-ser
- vlet-9.0.2.v20130417.jar dependency-jars/jetty-security-9.0.2.v201304
- 17.jar dependency-jars/httpclient-4.4.jar dependency-jars/httpcore-4.
- 4.jar dependency-jars/commons-logging-1.2.jar dependency-jars/commons
- -codec-1.9.jar
+Class-Path: dependency-jars/jcl-over-slf4j-1.6.1.jar dependency-jars/s
+ lf4j-api-1.6.1.jar dependency-jars/spark-core-1.1.1.jar dependency-ja
+ rs/jetty-server-9.0.2.v20130417.jar dependency-jars/javax.servlet-3.0
+ .0.v201112011016.jar dependency-jars/jetty-http-9.0.2.v20130417.jar d
+ ependency-jars/jetty-util-9.0.2.v20130417.jar dependency-jars/jetty-i
+ o-9.0.2.v20130417.jar dependency-jars/jetty-webapp-9.0.2.v20130417.ja
+ r dependency-jars/jetty-xml-9.0.2.v20130417.jar dependency-jars/jetty
+ -servlet-9.0.2.v20130417.jar dependency-jars/jetty-security-9.0.2.v20
+ 130417.jar dependency-jars/httpclient-4.4.jar dependency-jars/httpcor
+ e-4.4.jar dependency-jars/commons-logging-1.2.jar dependency-jars/com
+ mons-codec-1.9.jar
 Build-Jdk: 1.8.0_31
 Created-By: Maven Integration for Eclipse
-Main-Class: com.cognizant.dta.main.Request
+Main-Class: com.cognizant.dta.main.RequestURL
 

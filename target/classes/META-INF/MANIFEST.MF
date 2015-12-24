@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Built-By: 504607
 Class-Path: dependency-jars/slf4j-api-1.6.1.jar dependency-jars/slf4j-
  simple-1.6.1.jar dependency-jars/spark-core-1.1.1.jar dependency-jars
  /jetty-server-9.0.2.v20130417.jar dependency-jars/javax.servlet-3.0.0
@@ -11,7 +10,8 @@ Class-Path: dependency-jars/slf4j-api-1.6.1.jar dependency-jars/slf4j-
  0417.jar dependency-jars/httpclient-4.4.jar dependency-jars/httpcore-
  4.4.jar dependency-jars/commons-logging-1.2.jar dependency-jars/commo
  ns-codec-1.9.jar
-Build-Jdk: 1.8.0_31
+Build-Jdk: 1.7.0_85
+Built-By: 504607
 Created-By: Maven Integration for Eclipse
 Main-Class: com.cognizant.dta.main.MainController
 

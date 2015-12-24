@@ -75,7 +75,7 @@
 				var trId = [tmp.slice(0,2),tmp.slice(2,4),tmp.slice(4,6),tmp.slice(6,8)].join(" "); 
 				var data = $scope.r_f+pad(+$scope.m_application_ID)+trId+pad(+$scope.total_sections)+pad(+$scope.current_section)+$scope.current_section_data ;	
 		
-				var xml = "<ApplicationGatewayMessage transactionId=\""+$scope.transactionId+"\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\">"+btoa(data)+"</ApplicationGatewayMessage>"
+				var xml = "<ApplicationGatewayMessage transactionId=\""+$scope.transactionId+"\" macAddress=\""+$scope.macAdd+"\" region=\""+$scope.region+"\" schemaVersion=\"1.1\"  xmlns=\"http://www.ccadllc.com/schema/dta-application-gateway/1\">"+btoa(data)+"</ApplicationGatewayMessage>"
 		 
 				var protocol = $location.protocol();
 				var host = $location.host();

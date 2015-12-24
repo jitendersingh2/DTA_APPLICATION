@@ -121,6 +121,8 @@ public class MainController {
             public Object handle(Request request, Response response) {
 				
 				log.info("========== Inside getXML");
+				response.type("application/vnd.ccadllc.dta-application-gateway+xml");
+				//response.header("Access-Control-Allow-Origin", "*");
             	String body =  request.body();
     			try {
     				String tmp = HttpUtil.sendPOST(body);
